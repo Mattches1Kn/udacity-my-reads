@@ -12,13 +12,12 @@ body, .app {
 
 .list-books-title {
   padding: 10px 0;
-  background: #2e7c31;
   text-align: center;
 }
 .list-books-title h1 {
-  font-weight: 400;
+  font-weight: 200;
   margin: 0;
-  color: white;
+  color: black;
 }
 
 .list-books-content {
@@ -37,10 +36,23 @@ body, .app {
 }
 
 .bookshelf-title {
-  border-bottom: 1px solid #dedede;
+  background-color: #2e7c31;
+  color: #eeeeee;
+  text-align: right;
+  padding-right: 10px;
+  margin-bottom: 0;
+  font-weight: 100;
 }
+
 .bookshelf-books {
   text-align: center;
+  background-color: #f1f1f1;
+}
+
+.bookshelf-no-books {
+  text-align: center;
+  font-style: italic;
+  color: #999999;
 }
 
 .open-search {

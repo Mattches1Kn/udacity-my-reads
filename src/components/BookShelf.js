@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Book from './Book';
+import BookDummy from './BookDummy';
 import PropTypes from 'prop-types';
 
 class BookShelf extends Component {
@@ -20,6 +21,11 @@ class BookShelf extends Component {
                                 />
                             </li>
                         ))}
+                        {books.length === 0 && (
+                            <li key="0">
+                                <BookDummy/>
+                            </li>
+                        )}
                     </ol>
                 </div>
             </div>

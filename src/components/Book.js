@@ -9,10 +9,11 @@ class Book extends Component {
 
     render() {
         const {book} = this.props;
+        const thumbnail = book.imageLinks && book.imageLinks.thumbnail ? book.imageLinks.thumbnail : '';
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{backgroundImage: `url(${book.imageLinks.thumbnail})`}}>
+                    <div className="book-cover" style={{backgroundImage: `url(${thumbnail})`}}>
                     </div>
                     <div className="book-shelf-changer">
                         <select onChange={(event) => this.changeBookShelf(event.target.value)} value={book.shelf}>

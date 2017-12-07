@@ -32,7 +32,7 @@ class BookSearch extends Component {
             if (searchResults.error) {
                 this.setState({
                     searchResults: [],
-                    showNoResults: true
+                    showNoResultsMessage: true
                 });
             } else {
                 // add attribute shelf to all books from search and take shelf from already selected books
@@ -44,7 +44,7 @@ class BookSearch extends Component {
                 });
                 this.setState({
                     searchResults: searchResultsModified,
-                    showNoResults: false
+                    showNoResultsMessage: false
                 });
             }
         });
@@ -54,7 +54,7 @@ class BookSearch extends Component {
         this.setState({
             query: '',
             books: [],
-            showNoResults: false
+            showNoResultsMessage: false
         });
     };
 
@@ -69,7 +69,7 @@ class BookSearch extends Component {
                         <input
                             type="text"
                             value={query}
-                            placeholder="Search by title or author"
+                            placeholder="Search by title or author (minimum 3 characters)"
                             onChange={(event) => this.onInputChange(event)}
                         />
                     </div>

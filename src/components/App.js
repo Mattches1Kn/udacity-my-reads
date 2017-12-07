@@ -34,6 +34,8 @@ class App extends React.Component {
     };
 
     render() {
+        const {bookShelves} = this.props;
+        const {books} = this.state;
         return (
             <div className="app">
                 <Route exact path="/" render={() => (
@@ -42,14 +44,14 @@ class App extends React.Component {
                             <h1>MyReads</h1>
                         </div>
                         <div className="list-books-content">
-                            {this.props.bookShelves.map((shelf) => (
+                            {bookShelves.map((shelf) => (
                                 <div key={shelf.filter}>
                                     <BookShelf
-                                        bookShelves={this.props.bookShelves}
+                                        bookShelves={bookShelves}
                                         onChangeShelf={this.changeShelf}
                                         title={shelf.title}
                                         filter={shelf.filter}
-                                        books={this.state.books.filter((book) => (book.shelf === shelf.filter))}
+                                        books={books.filter((book) => (book.shelf === shelf.filter))}
                                     />
                                 </div>
                             ))}
@@ -61,10 +63,10 @@ class App extends React.Component {
                 )}/>
                 <Route exact path="/search" render={({history}) => (
                     <BookSearch
-                        bookShelves={this.props.bookShelves}
-                        books={this.state.books}
+                        bookShelves={bookShelves}
+                        books={books}
                         onChangeShelf={this.changeShelf}
-                        />
+                    />
                 )}/>
             </div>
         )

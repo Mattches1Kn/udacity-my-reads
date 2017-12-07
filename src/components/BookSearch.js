@@ -3,7 +3,7 @@ import Book from './Book';
 import * as BooksAPI from './../utils/BooksAPI';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
-let debounce = require('throttle-debounce/debounce');
+const debounce = require('throttle-debounce/debounce');
 
 class BookSearch extends Component {
 
@@ -11,8 +11,8 @@ class BookSearch extends Component {
         super(props);
         this.state = {
             query: '',
-            books: [],
-            showNoResults: false
+            searchResults: [],
+            showNoResultsMessage: false
         };
         this.doSearch = debounce(400, this.doSearch);//call search only once in given milliseconds
     }
@@ -28,22 +28,22 @@ class BookSearch extends Component {
     };
 
     doSearch = (query) => {
-       BooksAPI.search(query).then(books => {
-            if (books.error) {
+       BooksAPI.search(query).then(searchResults => {
+            if (searchResults.error) {
                 this.setState({
-                    books: [],
+                    searchResults: [],
                     showNoResults: true
                 });
             } else {
                 // add attribute shelf to all books from search and take shelf from already selected books
-                let booksModified = books.map((book) => {
+                let searchResultsModified = searchResults.map((book) => {
                     let o = Object.assign({}, book);
                     let result = this.props.books.find((bookInShelf) => bookInShelf.id === book.id);
                     o.shelf = result ? result.shelf : 'none';
                     return o;
                 });
                 this.setState({
-                    books: booksModified,
+                    searchResults: searchResultsModified,
                     showNoResults: false
                 });
             }
@@ -59,6 +59,8 @@ class BookSearch extends Component {
     };
 
     render() {
+        const {query, searchResults, showNoResultsMessage} = this.state;
+        const {bookShelves, onChangeShelf} = this.props;
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -66,7 +68,7 @@ class BookSearch extends Component {
                     <div className="search-books-input-wrapper">
                         <input
                             type="text"
-                            value={this.state.query}
+                            value={query}
                             placeholder="Search by title or author"
                             onChange={(event) => this.onInputChange(event)}
                         />
@@ -74,20 +76,20 @@ class BookSearch extends Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        {this.state.books.map((book) => (
+                        {searchResults.map((book) => (
                             <li key={book.id}>
                                 <Book
-                                    bookShelves={this.props.bookShelves}
-                                    onChangeShelf={this.props.onChangeShelf}
+                                    bookShelves={bookShelves}
+                                    onChangeShelf={onChangeShelf}
                                     book={book}
                                 />
                             </li>
                         ))}
                     </ol>
                 </div>
-                {this.state.showNoResults && (
+                {showNoResultsMessage && (
                     <div className="search-books-no-results">
-                        <h2>Sorry, there are no results for your query <i>'{this.state.query}'</i></h2>
+                        <h2>Sorry, there are no results for your query <i>'{query}'</i></h2>
                         <button onClick={this.clearQuery}>Clear Query</button>
                     </div>
                 )}

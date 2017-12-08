@@ -4,20 +4,25 @@ import {Route, Link} from 'react-router-dom';
 import './App.css';
 import BookShelf from './BookShelf';
 import BookSearch from './BookSearch';
+import Loader from 'react-loader';
 
 class App extends React.Component {
 
     state = {
-        books: []
+        books: [],
+        loaded : false
     };
 
     refreshShelves = () => {
         BooksAPI.getAll().then(books => {
             if (books.error) {
-                //
+                this.setState({
+                    loaded: true
+                });
             } else {
                 this.setState({
-                    books: books
+                    books: books,
+                    loaded: true
                 })
             }
         });
@@ -27,19 +32,29 @@ class App extends React.Component {
         this.refreshShelves();
     };
 
-    changeShelf = (book, newShelf) => {
-        BooksAPI.update(book, newShelf).then(
-            this.refreshShelves()
+    changeShelf = (book, newShelf, doneCallback) => {
+        this.setState({
+            loaded: false//will be set to true in refreshShelves
+        });
+        BooksAPI.update(book, newShelf).then(data => {
+                this.refreshShelves();
+                if (doneCallback) {
+                    doneCallback();
+                }
+            }
         );
     };
 
     render() {
         const {bookShelves} = this.props;
-        const {books} = this.state;
+        const {books, loaded} = this.state;
         return (
             <div className="app">
+
                 <Route exact path="/" render={() => (
+
                     <div className="list-books">
+                        <Loader loaded={loaded} color="#fff"/>
                         <div className="list-books-title">
                             <h1>MyReads</h1>
                         </div>

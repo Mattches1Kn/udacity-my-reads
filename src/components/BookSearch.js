@@ -4,6 +4,7 @@ import * as BooksAPI from './../utils/BooksAPI';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 const debounce = require('throttle-debounce/debounce');
+import Loader from 'react-loader';
 
 class BookSearch extends Component {
 
@@ -12,7 +13,8 @@ class BookSearch extends Component {
         this.state = {
             query: '',
             searchResults: [],
-            showNoResultsMessage: false
+            showNoResultsMessage: false,
+            loaded : true
         };
         this.doSearch = debounce(400, this.doSearch);//call search only once in given milliseconds
     }
@@ -20,19 +22,25 @@ class BookSearch extends Component {
     onInputChange = (e) => {
         const query = e.target.value.trim();
         this.setState({
-            query: query
+            query: query,
+            showNoResultsMessage: false,
         });
         if (query.length > 2) {
+            this.setState({
+                loaded: false
+            });
             this.doSearch(query);
         }
     };
 
     doSearch = (query) => {
+
        BooksAPI.search(query).then(searchResults => {
             if (searchResults.error) {
                 this.setState({
                     searchResults: [],
-                    showNoResultsMessage: true
+                    showNoResultsMessage: true,
+                    loaded: true
                 });
             } else {
                 // add attribute shelf to all books from search and take shelf from already selected books
@@ -44,7 +52,8 @@ class BookSearch extends Component {
                 });
                 this.setState({
                     searchResults: searchResultsModified,
-                    showNoResultsMessage: false
+                    showNoResultsMessage: false,
+                    loaded: true
                 });
             }
         });
@@ -54,15 +63,31 @@ class BookSearch extends Component {
         this.setState({
             query: '',
             books: [],
-            showNoResultsMessage: false
+            showNoResultsMessage: false,
+            loaded: true
+        });
+    };
+
+    onChangeShelf = (book, shelf) => {
+        this.setState({
+            loaded: false
+        });
+        book.shelf = shelf;
+        this.props.onChangeShelf(book, shelf, this.onChangeShelfDone);
+    };
+
+    onChangeShelfDone = () => {
+        this.setState({
+            loaded: true
         });
     };
 
     render() {
-        const {query, searchResults, showNoResultsMessage} = this.state;
-        const {bookShelves, onChangeShelf} = this.props;
+        const {query, searchResults, showNoResultsMessage, loaded} = this.state;
+        const {bookShelves} = this.props;
         return (
             <div className="search-books">
+                <Loader loaded={loaded} color="#fff"/>
                 <div className="search-books-bar">
                     <Link to="/" className="close-search">Close</Link>
                     <div className="search-books-input-wrapper">
@@ -80,7 +105,7 @@ class BookSearch extends Component {
                             <li key={book.id}>
                                 <Book
                                     bookShelves={bookShelves}
-                                    onChangeShelf={onChangeShelf}
+                                    onChangeShelf={this.onChangeShelf}
                                     book={book}
                                 />
                             </li>

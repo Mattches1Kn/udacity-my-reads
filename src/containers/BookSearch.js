@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import Book from './Book';
-import * as BooksAPI from './../utils/BooksAPI';
+import Book from '../components/Book';
+import * as BooksAPI from '../utils/BooksAPI';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 const debounce = require('throttle-debounce/debounce');
@@ -20,16 +20,22 @@ class BookSearch extends Component {
     }
 
     onInputChange = (e) => {
-        const query = e.target.value.trim();
+        let query = e.target.value;
         this.setState({
             query: query,
             showNoResultsMessage: false,
         });
+        query = query.trim();
         if (query.length > 2) {
             this.setState({
                 loaded: false
             });
             this.doSearch(query);
+        } else {
+            this.setState({
+                searchResults: [],
+                loaded: true
+            });
         }
     };
 
